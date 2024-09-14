@@ -1,0 +1,126 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+	<div class="container-fluid">
+	  <div class="row mb-2">
+		<div class="col-sm-6">
+		  <h1>Proveedores</h1>
+		</div>
+	  </div>
+	</div><!-- /.container-fluid -->
+</section>
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+	      	<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Ingreso de Proveedores en el Sistema SnackCash&reg</h3>
+						<button id="create-proveedor" class="btn btn-sm btn-success float-right" type="button" name="button"><i class="fa fa-plus"></i> Crear Proveedor</button>
+					</div>	          		
+	          		<div class="card-body">
+	            		<table id="proveedor-table" class="table table-bordered table-striped">
+	              			<thead>
+	                			<tr>
+									<th>Id</th>
+									<th>Nombre</th>
+									<th>Representante</th>
+									<th>Dirección</th>
+	                  				<th>NIT</th>
+									<th>IVA</th>
+									<th>Telefono</th>
+									<th>Email</th>
+									<th>Descripción</th>
+	                  				<th>Acciones</th>
+	                			</tr>
+	              			</thead>
+	              			<tbody>
+	              				{% if object_list %}
+		              				{% for proveedor in object_list %}
+			                			<tr class="gradeU">
+											<td>{{ proveedor.id }}</td>
+			                  				<td>{{ proveedor.nombre }}</td>
+											<td>{{ proveedor.representante }}</td>
+											<td>{{ proveedor.direccion }}</td>
+											<td>{{ proveedor.nit }}</td>
+			                  				<td>{{ proveedor.iva }}</td>
+											<td>{{ proveedor.telefono }}</td>
+											<td>{{ proveedor.email }}</td>
+											<td>{{ proveedor.descripcion }}</td>
+			                  				<td>			                  					
+												<button type="button" class="edit-proveedor bs-modal btn btn-sm btn-secondary" data-form-url="{% url 'compra:proveedoreedit' proveedor.id %}">
+													<span class="fa fa-user-edit"></span>
+												</button>			                  					
+												<button type="button" class="delete-proveedor bs-modal btn btn-sm btn-danger" data-form-url="{% url 'compra:proveedoredelete' proveedor.id %}">
+													<span class="fa fa-trash"></span>
+												</button>
+			                  				</td>
+			                			</tr>
+		                			{% endfor %}
+		                		{% endif %}
+	              			</tbody>
+	            		</table>
+	          		</div>
+	        	</div>
+	        </div>
+	    </div>
+	</div>
+</section>
+<!--end-main-container-part-->
+{% endblock %}
+
+{% block scriptbottom %}
+
+	<script type="text/javascript">
+		
+		// BS4
+		$(document).ready(function() {
+			$("#create-proveedor").modalForm({
+				formURL: "{% url 'compra:proveedorecreate' %}"
+			});
+
+			var table = $("#proveedor-table").DataTable({
+				language: {
+					"decimal": "",
+					"emptyTable": "No hay información",
+					"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+					"infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+					"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+					"infoPostFix": "",
+					"thousands": ",",
+					"lengthMenu": "Mostrar _MENU_ Entradas",
+					"loadingRecords": "Cargando...",
+					"processing": "Procesando...",
+					"search": "Buscar:",
+					"zeroRecords": "Sin resultados encontrados",
+					"paginate": {
+						"first": "Primero",
+						"last": "Ultimo",
+						"next": "Siguiente",
+						"previous": "Anterior"
+					}
+				},
+				"ordering": true,
+				"info": true,
+				"responsive": true, 
+				"lengthChange": true, 
+				"autoWidth": true,
+				"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+			}).buttons().container().appendTo('#proveedor-table_wrapper .col-md-6:eq(0)');
+		 
+			new $.fn.dataTable.FixedHeader( table );
+		});
+
+		$(".edit-proveedor").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url")});
+		});
+
+		$(".delete-proveedor").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url"), isDeleteForm: true});
+		});
+	
+	</script>
+		
+{% endblock %}

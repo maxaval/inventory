@@ -1,0 +1,81 @@
+<form method="post" action="">
+    {% csrf_token %}
+    <input type="hidden" name="compra" value="{{ compra_id }}">
+    <input type="hidden" id="utilidadactive" name="utilidadactive" value="{{ utilidadactive }}">
+  
+    <div class="modal-header">
+        <h5 class="modal-title">Crear Nueva Compra</h5> 
+        <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      
+    </div>
+  
+    <div class="modal-body">
+      {% for field in form %}
+        <div class="form-group{% if field.errors %} invalid{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}
+            <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endfor %}      
+    </div>
+  
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      <button type="submit" class="btn btn-primary">Crear</button>
+    </div>
+  
+</form>
+{% block scriptbottom %}
+  <script>
+      $(document).ready(function() {
+        document.getElementById('id_stockminimo').classList.add('form-control');
+        document.getElementById('id_stockmaximo').classList.add('form-control');
+        document.getElementById('id_precioventa').classList.add('form-control');
+        utilidadactive = document.getElementById('utilidadactive').value;
+
+        if (utilidadactive == 'True') {
+          $('#id_precioventa').closest('.form-group').hide();
+        } else {
+          // Si el producto no está en el inventario, mostrar los campos de stock
+          $('#id_precioventa').closest('.form-group').show();
+        }
+       
+          // Función para verificar si el producto está en el inventario y mostrar/ocultar los campos de stock
+          function verificarInventario(productoId) {
+              // Realizar una solicitud AJAX para verificar si el producto está en el inventario
+              $.ajax({
+                  url: '/compra/detallecompras/verificar-inventario/',
+                  type: 'GET',
+                  data: {
+                      'producto_id': productoId
+                  },
+                  success: function(response) {
+                      // Si el producto está en el inventario, ocultar los campos de stock
+                      if (response.en_inventario) {
+                        $('#id_stockminimo').closest('.form-group').hide();
+                        $('#id_stockmaximo').closest('.form-group').hide();
+                      } else {                        
+                        // Si el producto no está en el inventario, mostrar los campos de stock
+                        $('#id_stockminimo').closest('.form-group').show();
+                        $('#id_stockmaximo').closest('.form-group').show();
+                        
+                      }
+                  },
+                  error: function(xhr, status, error) {
+                      console.error('Error al verificar el inventario:', error);
+                  }
+              });
+          }
+
+          // Escuchar el cambio en la selección del producto
+          $('#id_producto').change(function() {
+              var productoId = $(this).val(); // Obtener el ID del producto seleccionado
+              verificarInventario(productoId); // Verificar si el producto está en el inventario
+          });
+      });
+  </script>
+{% endblock %}

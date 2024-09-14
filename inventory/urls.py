@@ -24,5 +24,8 @@ urlpatterns = [
     path('accounts/login/', LoginView.as_view(template_name='login.html'), name = 'login'),
     path('logout', logout_then_login, name = 'logout'),
     path('configuracion/', include('apps.configuracion.urls', namespace = 'configuracion')),
+    path('inventario/', include('apps.inventario.urls', namespace = 'inventario')),
+    path('compra/', include('apps.compra.urls', namespace = 'compra')),
+    path('venta/', include('apps.venta.urls', namespace = 'venta')),
     path('usuario/', include('apps.usuario.urls', namespace = 'usuario')),
 ]

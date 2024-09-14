@@ -43,9 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'bootstrap_modal_forms',
-    'apps.usuario',
+    'bootstrap_modal_forms',    
     'apps.configuracion',
+    'apps.usuario',
+    'apps.inventario',
+    'apps.compra',
+    'apps.venta',
+    
 ]
 
 MIDDLEWARE = [
@@ -86,7 +90,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'inventory',
-        'USER': 'maxaval',
+        'USER': 'postgres',
         'PASSWORD': 'password',
         'HOST': '127.0.0.1',
         'PORT': '5432',

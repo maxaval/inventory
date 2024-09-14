@@ -1,0 +1,116 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+	<div class="container-fluid">
+	  <div class="row mb-2">
+		<div class="col-sm-6">
+		  <h1>Productos Especiales (Promociones)</h1>
+		</div>
+	  </div>
+	</div><!-- /.container-fluid -->
+</section>
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+	      	<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Listado de Productos Especiales en el Sistema SnackCash&reg</h3>
+						<button id="create-especiale" class="btn btn-sm btn-success float-right" type="button" name="button"><i class="fa fa-plus"></i> Crear Producto Especial</button>
+					</div>	          		
+	          		<div class="card-body">
+	            		<table id="especiale-table" class="table table-bordered table-striped">
+	              			<thead>
+	                			<tr>
+									<th>Id</th>
+									<th>Producto</th>
+									<th>Cantidad</th>
+									<th>Precio</th>
+	                  				<th>Acciones</th>
+	                			</tr>
+	              			</thead>
+	              			<tbody>
+	              				{% if object_list %}
+		              				{% for especiale in object_list %}
+			                			<tr class="gradeU">
+											<td>{{ especiale.id }}</td>
+			                  				<td>{{ especiale.producto }}</td>
+											<td>{{ especiale.cantidad }}</td>
+											<td>{{ produespecialecto.precio }}</td>
+			                  				<td>			                  					
+												<button type="button" class="edit-especiale bs-modal btn btn-sm btn-secondary" data-form-url="{% url 'inventario:especialeedit' especiale.id %}">
+													<span class="fa fa-user-edit"></span>
+												</button>			                  					
+												<button type="button" class="delete-especiale bs-modal btn btn-sm btn-danger" data-form-url="{% url 'inventario:especialedelete' especiale.id %}">
+													<span class="fa fa-trash"></span>
+												</button>
+			                  				</td>
+			                			</tr>
+		                			{% endfor %}
+		                		{% endif %}
+	              			</tbody>
+	            		</table>
+	          		</div>
+	        	</div>
+	        </div>
+	    </div>
+	</div>
+</section>
+<!--end-main-container-part-->
+{% endblock %}
+
+{% block scriptbottom %}
+
+	<script type="text/javascript">
+		
+		// BS4
+		$(document).ready(function() {
+			$("#create-especiale").modalForm({
+				formURL: "{% url 'inventario:especialecreate' %}"
+			});
+
+			var table = $("#especiale-table").DataTable({
+				language: {
+					"decimal": "",
+					"emptyTable": "No hay información",
+					"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+					"infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+					"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+					"infoPostFix": "",
+					"thousands": ",",
+					"lengthMenu": "Mostrar _MENU_ Entradas",
+					"loadingRecords": "Cargando...",
+					"processing": "Procesando...",
+					"search": "Buscar:",
+					"zeroRecords": "Sin resultados encontrados",
+					"paginate": {
+						"first": "Primero",
+						"last": "Ultimo",
+						"next": "Siguiente",
+						"previous": "Anterior"
+					}
+				},
+				"ordering": true,
+				"info": true,
+				"responsive": true, 
+				"lengthChange": true, 
+				"autoWidth": true,
+				"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+			}).buttons().container().appendTo('#especiale-table_wrapper .col-md-6:eq(0)');
+		 
+			new $.fn.dataTable.FixedHeader( table );
+		});
+
+		$(".edit-especiale").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url")});
+		});
+
+		$(".delete-especiale").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url"), isDeleteForm: true});
+		});
+	
+	</script>
+		
+{% endblock %}

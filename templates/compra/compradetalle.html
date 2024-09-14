@@ -1,0 +1,138 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+	      	<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Compra de Productos en el Sistema SnackCash&reg</h3>
+						<button id="create-detalle" class="btn btn-sm btn-success float-right" type="button" name="button"><i class="fa fa-plus"></i> Ingresar Productos Compra</button>
+                        <br><hr/><br>
+						<div class="row">
+                            <div class="col-md-3">
+                                <p>Factura</p>
+                                <p>Proveedor</p>
+                                <p>Descripcion</p>
+                                <p>Pago/Caja</p>
+                                <p>Bonificación</p>
+                                <p>Tot/Compra</p>
+                                <p>Estado</p>
+                            </div>
+							<div class="col-md-9">
+                                <p>{{ compra.factura }}</p>
+                                <p>{{ compra.proveedor }}</p>
+                                <p>{{ compra.descripcion }}</p>
+                                <p>{{ compra.pagocaja }}</p>
+                                <p>{{ compra.bonificacion }}</p>
+                                <p>{{ compra.totalcompra }}</p>
+                                <p>
+									<span class="right badge badge-success">{{ compra.estado }}</span>
+								</p>
+                            </div>
+                        </div>
+                    </div>
+                    		          		
+	          		<div class="card-body">
+	            		<table id="detalle-table" class="table table-bordered table-striped" style="width:100%">
+	              			<thead>
+	                			<tr>
+									<th>Id</th>
+									<th>Producto</th>
+									<th>Cantidad</th>
+									<th>Precio/Uni</th>
+	                  				<th>Precio/Total</th>
+	                  				<th>Acciones</th>
+	                			</tr>
+	              			</thead>
+	              			<tbody>	 
+								{% for detallecompra in detallecompras %}
+									<tr class="gradeU">
+										<td>{{ detallecompra.id }}</td>
+										<td>{{ detallecompra.producto }}</td>
+										<td>{{ detallecompra.cantidad }}</td>
+										<td>{{ detallecompra.preciounitario }}</td>
+										<td>{{ detallecompra.preciototal }}</td>
+										<td>												
+											<button type="button" class="edit-detallecompra bs-modal btn btn-sm btn-secondary" data-form-url="{% url 'compra:detallecompraedit' detallecompra.id compra.id %}">
+												<span class="fa fa-user-edit"></span>
+											</button>			                  					
+											<button type="button" class="delete-detallecompra bs-modal btn btn-sm btn-danger" data-form-url="{% url 'compra:detallecompradelete' detallecompra.id compra.id %}">
+												<span class="fa fa-trash"></span>
+											</button>									
+										</td>
+									</tr>
+								{% endfor %}		
+	              			</tbody>
+							<tfoot>
+								<tr>
+									<th colspan="4" style="text-align:right">Total:</th>
+									<th></th>
+									<th></th>
+								</tr>
+							</tfoot>
+	            		</table>
+	          		</div>
+	        	</div>
+	        </div>
+	    </div>
+	</div>
+</section>
+<!--end-main-container-part-->
+{% endblock %}
+
+{% block scriptbottom %}
+	<script type="text/javascript">
+		
+		// BS4
+		$(document).ready(function() {
+			$("#create-detalle").modalForm({
+				formURL: "{% url 'compra:detallecompracreate' compra.id %}"
+			});
+
+			var table = $("#detalle-table").DataTable({				
+				language: {
+					"decimal": ".",
+					"emptyTable": "No hay información",
+					"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+					"infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+					"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+					"infoPostFix": "",
+					"thousands": ",",
+					"lengthMenu": "Mostrar _MENU_ Entradas",
+					"loadingRecords": "Cargando...",
+					"processing": "Procesando...",
+					"search": "Buscar:",
+					"zeroRecords": "Sin resultados encontrados",
+					"paginate": {
+						"first": "Primero",
+						"last": "Ultimo",
+						"next": "Siguiente",
+						"previous": "Anterior"
+					}
+				},
+
+				"ordering": true,
+				"info": true,
+				"responsive": true,
+				"lengthChange": true,
+				"autoWidth": true,
+				"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+			}).buttons().container().appendTo('#detalle-table_wrapper .col-md-6:eq(0)');
+		 
+			new $.fn.dataTable.FixedHeader( table );
+		});
+
+		$(".edit-detallecompra").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url")});
+		});
+
+		$(".delete-detallecompra").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url"), isDeleteForm: true});
+		});
+	
+	</script>
+{% endblock %}

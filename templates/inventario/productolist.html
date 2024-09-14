@@ -1,0 +1,144 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+	<div class="container-fluid">
+	  <div class="row mb-2">
+		<div class="col-sm-6">
+		  <h1>Productos</h1>
+		</div>
+	  </div>
+	</div><!-- /.container-fluid -->
+</section>
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+	      	<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Listado de Productos en el Sistema SnackCash&reg</h3>
+						<button id="create-producto" class="btn btn-sm btn-success float-right" type="button" name="button"><i class="fa fa-plus"></i> Crear Producto</button>
+						<button id="importcsv" class="btn btn-sm btn-secondary float-right" type="button" name="button"><i class="fa fa-download"></i> Importar Productos</button>
+					</div>	          		
+	          		<div class="card-body">
+	            		<table id="producto-table" class="table table-bordered table-striped">
+	              			<thead>
+	                			<tr>
+									<th>Id</th>
+									<th>Barras</th>
+									<th>Foto</th>
+									<th>Codigo</th>
+	                  				<th>Nombre</th>
+									<th>Descripción</th>									
+									<th>Contenedor</th>
+									<th>Cant. Conte.</th>
+									<th>Categoría</th>
+	                  				<th>Acciones</th>
+	                			</tr>
+	              			</thead>
+	              			<tbody>
+	              				{% if object_list %}
+		              				{% for producto in object_list %}
+			                			<tr class="gradeU">																						
+											<td>{{ producto.id }}</td>
+											<td>
+												{% if producto.codigo %}
+													{% with codigo_barras=producto.generar_codigo_barras %}
+														{% if codigo_barras %}
+															<img src="{% static codigo_barras %}" alt="{{ producto.codigo }}" />
+														{% endif %}
+													{% endwith %}
+												{% endif %}
+											</td>
+											<td>
+												{% if producto.photo %}
+													<img src="{% static 'uploads/' %}{{ producto.photo }}" width="60" height="60">
+												{% else %}
+													<img src="{% static 'uploads/productos/imagen-no-disponible.png' %}" width="60" height="60"></td>
+												{% endif %}
+											</td>
+			                  				<td>{{ producto.codigo }}</td>
+											<td>{{ producto.nombre }}</td>
+											<td>{{ producto.descripcion }}</td>
+			                  				<td>{{ producto.contenedor }}</td>
+											<td>{{ producto.cantidadcontenedor }}</td>
+											<td>{{ producto.categoria }}</td>
+			                  				<td>			                  					
+												<button type="button" class="edit-producto bs-modal btn btn-sm btn-secondary" data-form-url="{% url 'inventario:productoedit' producto.id %}">
+													<span class="fa fa-user-edit"></span>
+												</button>			                  					
+												<button type="button" class="delete-producto bs-modal btn btn-sm btn-danger" data-form-url="{% url 'inventario:productodelete' producto.id %}">
+													<span class="fa fa-trash"></span>
+												</button>
+			                  				</td>
+			                			</tr>
+		                			{% endfor %}
+		                		{% endif %}
+	              			</tbody>
+	            		</table>
+	          		</div>
+	        	</div>
+	        </div>
+	    </div>
+	</div>
+</section>
+<!--end-main-container-part-->
+{% endblock %}
+
+{% block scriptbottom %}
+
+	<script type="text/javascript">
+		
+		// BS4
+		$(document).ready(function() {
+			$("#create-producto").modalForm({
+				formURL: "{% url 'inventario:productocreate' %}"
+			});
+			$("#importcsv").modalForm({
+				formURL: "{% url 'inventario:procesar_csv' %}"
+			});
+
+			var table = $("#producto-table").DataTable({
+				language: {
+					"decimal": "",
+					"emptyTable": "No hay información",
+					"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+					"infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+					"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+					"infoPostFix": "",
+					"thousands": ",",
+					"lengthMenu": "Mostrar _MENU_ Entradas",
+					"loadingRecords": "Cargando...",
+					"processing": "Procesando...",
+					"search": "Buscar:",
+					"zeroRecords": "Sin resultados encontrados",
+					"paginate": {
+						"first": "Primero",
+						"last": "Ultimo",
+						"next": "Siguiente",
+						"previous": "Anterior"
+					}
+				},
+				"ordering": true,
+				"info": true,
+				"responsive": true, 
+				"lengthChange": true, 
+				"autoWidth": true,
+				"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+			}).buttons().container().appendTo('#producto-table_wrapper .col-md-6:eq(0)');
+		 
+			new $.fn.dataTable.FixedHeader( table );
+		});
+
+		$(".edit-producto").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url")});
+		});
+
+		$(".delete-producto").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url"), isDeleteForm: true});
+		});
+	
+	</script>
+		
+{% endblock %}
