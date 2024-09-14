@@ -1,0 +1,118 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+	<div class="container-fluid">
+	  <div class="row mb-2">
+		<div class="col-sm-6">
+		  <h1>Sucursales</h1>
+		</div>
+	  </div>
+	</div><!-- /.container-fluid -->
+</section>
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+	      	<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Listado de Sucursales en el Sistema SnackCash&reg</h3>
+						<button id="create-sucursal" class="btn btn-sm btn-success float-right" type="button" name="button"><i class="fa fa-plus"></i> Crear Sucursal</button>
+					</div>	          		
+	          		<div class="card-body">
+	            		<table id="sucursal-table" class="table table-bordered table-striped">
+	              			<thead>
+	                			<tr>
+									<th>Id</th>
+									<th>Nombre Empresa</th>
+	                  				<th>Nombre Sucursal</th>
+	                  				<th>Dirección</th>
+	                  				<th>IP Sucursal</th>
+	                  				<th>Acciones</th>
+	                			</tr>
+	              			</thead>
+	              			<tbody>
+	              				{% if object_list %}
+		              				{% for sucursal in object_list %}
+			                			<tr class="gradeU">
+											<td>{{ sucursal.id }}</td>
+											<td>{{ sucursal.empresa }}</td>
+			                  				<td>{{ sucursal.nombre }}</td>
+			                  				<td>{{ sucursal.direccion }}</td>
+			                  				<td>{{ sucursal.ipsucursal }}</td>			                  				
+			                  				<td>			                  					
+												<button type="button" class="edit-sucursal bs-modal btn btn-sm btn-secondary" data-form-url="{% url 'configuracion:sucursaledit' sucursal.id %}">
+													<span class="fa fa-user-edit"></span>
+												</button>			                  					
+												<button type="button" class="delete-sucursal bs-modal btn btn-sm btn-danger" data-form-url="{% url 'configuracion:sucursaldelete' sucursal.id %}">
+													<span class="fa fa-trash"></span>
+												</button>
+			                  				</td>
+			                			</tr>
+		                			{% endfor %}
+		                		{% endif %}
+	              			</tbody>
+	            		</table>
+	          		</div>
+	        	</div>
+	        </div>
+	    </div>
+	</div>
+</section>
+<!--end-main-container-part-->
+{% endblock %}
+
+{% block scriptbottom %}
+
+	<script type="text/javascript">
+		
+		// BS4
+		$(document).ready(function() {
+			$("#create-sucursal").modalForm({
+				formURL: "{% url 'configuracion:sucursalcreate' %}"
+			});
+
+			var table = $("#sucursal-table").DataTable({
+				language: {
+					"decimal": "",
+					"emptyTable": "No hay información",
+					"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+					"infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+					"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+					"infoPostFix": "",
+					"thousands": ",",
+					"lengthMenu": "Mostrar _MENU_ Entradas",
+					"loadingRecords": "Cargando...",
+					"processing": "Procesando...",
+					"search": "Buscar:",
+					"zeroRecords": "Sin resultados encontrados",
+					"paginate": {
+						"first": "Primero",
+						"last": "Ultimo",
+						"next": "Siguiente",
+						"previous": "Anterior"
+					}
+				},
+				"ordering": true,
+				"info": true,
+				"responsive": true, 
+				"lengthChange": true, 
+				"autoWidth": true,
+				"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+			}).buttons().container().appendTo('#sucursal-table_wrapper .col-md-6:eq(0)');
+		 
+			new $.fn.dataTable.FixedHeader( table );
+		});
+
+		$(".edit-sucursal").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url")});
+		});
+
+		$(".delete-sucursal").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url"), isDeleteForm: true});
+		});
+	
+	</script>
+		
+{% endblock %}

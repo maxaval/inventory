@@ -1,0 +1,48 @@
+<form method="post" action="">
+    {% csrf_token %}
+  
+    <div class="modal-header">
+        <h5 class="modal-title">Crear Nuevo Usuario</h5> 
+        <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      
+    </div>
+  
+    <div class="modal-body">     
+      {% for field in form %}
+        <div class="form-group{% if field.errors %} invalid{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {% if field.name == 'password1' or field.name == 'password2' %}
+            <input type="password" name="{{ field.name }}" class="form-control" placeholder="{{ field.label }}">
+          {% else %}
+            {{ field }}
+          {% endif %}
+          {% for error in field.errors %}
+            <p class="help-block">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      <button type="submit" class="btn btn-primary">Crear</button>
+    </div>
+  
+</form>
+
+{% block scriptbottom %}
+<script>
+  $(function() {
+    $('#id_is_active').bootstrapToggle();
+    $('#id_is_superuser').bootstrapToggle();
+    $('#id_is_staff').bootstrapToggle();
+    $('#id_antecedente').bootstrapToggle();
+    $('#id_solvencia').bootstrapToggle();
+    $('#id_vacunaCOVID').bootstrapToggle();
+    $('#id_discapacidad').bootstrapToggle();
+    $('#id_wallet').bootstrapToggle();
+  })
+</script>
+{% endblock %}

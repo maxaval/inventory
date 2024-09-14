@@ -1,0 +1,118 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="content-header">
+	<div class="container-fluid">
+	  <div class="row mb-2">
+		<div class="col-sm-6">
+		  <h1>Usuarios</h1>
+		</div>
+	  </div>
+	</div><!-- /.container-fluid -->
+</section>
+<section class="content">
+	<div class="container-fluid">
+		<div class="row">
+	      	<div class="col-12">
+				<div class="card">
+					<div class="card-header">
+						<h3 class="card-title">Listado de Usuarios en el Sistema SnackCash&reg</h3>
+						<button id="create-user" class="btn btn-sm btn-success float-right" type="button" name="button"><i class="fa fa-plus"></i> Crear Usuario</button>
+					</div>	          		
+	          		<div class="card-body">
+	            		<table id="user-table" class="table table-bordered table-striped">
+	              			<thead>
+	                			<tr>
+									<th>Id</th>
+	                  				<th>Usuario</th>
+	                  				<th>Nombre Completo</th>
+	                  				<th>Email</th>
+	                  				<th>Activo</th>
+	                  				<th>Acciones</th>
+	                			</tr>
+	              			</thead>
+	              			<tbody>
+	              				{% if object_list %}
+		              				{% for usuario in object_list %}
+			                			<tr class="gradeU">
+											<td>{{ usuario.id }}</td>
+			                  				<td>{{ usuario.username }}</td>
+			                  				<td>{{ usuario.first_name }} {{ usuario.last_name }}</td>
+			                  				<td>{{ usuario.email }}</td>
+			                  				<td>{{ usuario.is_active }}</td>
+			                  				<td>			                  					
+												<button type="button" class="edit-user bs-modal btn btn-sm btn-secondary" data-form-url="{% url 'usuario:usuarioedit' usuario.id %}">
+													<span class="fa fa-user-edit"></span>
+												</button>			                  					
+												<button type="button" class="delete-user bs-modal btn btn-sm btn-danger" data-form-url="{% url 'usuario:usuariodelete' usuario.id %}">
+													<span class="fa fa-trash"></span>
+												</button>
+			                  				</td>
+			                			</tr>
+		                			{% endfor %}
+		                		{% endif %}
+	              			</tbody>
+	            		</table>
+	          		</div>
+	        	</div>
+	        </div>
+	    </div>
+	</div>
+</section>
+<!--end-main-container-part-->
+{% endblock %}
+
+{% block scriptbottom %}
+
+	<script type="text/javascript">
+		
+		// BS4
+		$(document).ready(function() {
+			$("#create-user").modalForm({
+				formURL: "{% url 'usuario:usuarioadd' %}"
+			});
+
+			var table = $("#user-table").DataTable({
+				language: {
+					"decimal": "",
+					"emptyTable": "No hay información",
+					"info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+					"infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+					"infoFiltered": "(Filtrado de _MAX_ total entradas)",
+					"infoPostFix": "",
+					"thousands": ",",
+					"lengthMenu": "Mostrar _MENU_ Entradas",
+					"loadingRecords": "Cargando...",
+					"processing": "Procesando...",
+					"search": "Buscar:",
+					"zeroRecords": "Sin resultados encontrados",
+					"paginate": {
+						"first": "Primero",
+						"last": "Ultimo",
+						"next": "Siguiente",
+						"previous": "Anterior"
+					}
+				},
+				"ordering": true,
+				"info": true,
+				"responsive": true, 
+				"lengthChange": true, 
+				"autoWidth": true,
+				"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+			}).buttons().container().appendTo('#user-table_wrapper .col-md-6:eq(0)');
+		 
+			new $.fn.dataTable.FixedHeader( table );
+		});
+
+		$(".edit-user").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url")});
+		});
+
+		$(".delete-user").each(function () {
+			$(this).modalForm({formURL: $(this).data("form-url"), isDeleteForm: true});
+		});
+	
+	</script>
+		
+{% endblock %}
